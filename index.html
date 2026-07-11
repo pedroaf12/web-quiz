@@ -3,109 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz</title>
+<title>Quiz Configurável</title>
 
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-    background:linear-gradient(135deg,#4f46e5,#0ea5e9);
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+background:linear-gradient(135deg,#4f46e5,#0ea5e9);
+padding:30px;
 }
 
-.quiz{
-    width:90%;
-    max-width:650px;
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,.2);
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 20px rgba(0,0,0,.2);
 }
 
 h1{
-    text-align:center;
-    margin-bottom:20px;
+text-align:center;
+margin-bottom:20px;
 }
 
-#pergunta{
-    font-size:22px;
-    margin-bottom:20px;
+.card{
+margin-bottom:30px;
+padding:20px;
+border:1px solid #ddd;
+border-radius:10px;
+}
+
+.card h2{
+margin-bottom:15px;
+}
+
+input[type=text]{
+width:100%;
+padding:10px;
+margin:8px 0;
+font-size:16px;
+}
+
+label{
+display:block;
+margin:8px 0;
 }
 
 button{
-    width:100%;
-    padding:15px;
-    margin:8px 0;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:17px;
-    background:#f3f4f6;
-    transition:.3s;
+padding:15px;
+width:100%;
+font-size:18px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#2563eb;
+color:white;
+margin-top:20px;
 }
 
 button:hover{
-    background:#dbeafe;
+background:#1d4ed8;
 }
 
-.correta{
-    background:#22c55e !important;
-    color:white;
-}
-
-.errada{
-    background:#ef4444 !important;
-    color:white;
-}
-
-#proximo{
-    display:none;
-    margin-top:20px;
-    background:#2563eb;
-    color:white;
+#quiz{
+display:none;
 }
 
 #resultado{
-    text-align:center;
+display:none;
+text-align:center;
 }
-</style>
-</head>
 
+.alternativa{
+display:block;
+width:100%;
+padding:15px;
+margin:10px 0;
+background:#3f5788;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+transition:.3s;
+}
+
+.alternativa:hover{
+background:#576272;
+}
+
+.correta{
+background:#22c55e!important;
+color:white;
+}
+
+.errada{
+background:#ef4444!important;
+color:white;
+}
+
+</style>
+
+</head>
 <body>
 
-<div class="quiz">
+<div class="container">
 
-<h1>🎯 Quiz</h1>
+<div id="config">
 
-<div id="quiz">
-    <div id="pergunta"></div>
+<h1>Configurar Quiz</h1>
 
-    <div id="alternativas"></div>
+<div id="configPerguntas"></div>
 
-    <button id="proximo">Próxima</button>
+<button onclick="iniciarQuiz()">
+Iniciar Quiz
+</button>
+
 </div>
 
-<div id="resultado" style="display:none;">
-    <h2>Quiz Finalizado!</h2>
-    <br>
-    <h3 id="pontuacao"></h3>
-    <br>
-    <button onclick="location.reload()">Jogar Novamente</button>
+<div id="quiz">
+
+<h1>Quiz</h1>
+
+<h2 id="pergunta"></h2>
+
+<h3 id="timer" style="text-align:center;margin:15px 0;color:#2563eb;">
+Tempo: 15s
+</h3>
+
+<div id="alternativas"></div>
+
+<button id="proximo" style="display:none;">
+Próxima
+</button>
+
+</div>
+
+<div id="resultado">
+
+<h1>Fim do Quiz</h1>
+
+<h2 id="pontuacao"></h2>
+
+<button onclick="location.reload()">
+Jogar novamente
+</button>
+
 </div>
 
 </div>
 
 <script>
 
-const perguntas = [
+const perguntas=[];
+
+const exemplo=[
 
 {
 pergunta:"Quem descobriu o Brasil?",
@@ -142,8 +200,134 @@ correta:3
 
 ];
 
+const area=document.getElementById("configPerguntas");
+
+exemplo.forEach((q,index)=>{
+
+const card=document.createElement("div");
+card.className="card";
+
+card.innerHTML=`
+
+<h2>Pergunta ${index+1}</h2>
+
+<input
+type="text"
+id="p${index}"
+value="${q.pergunta}"
+>
+
+<input
+type="text"
+id="p${index}a0"
+value="${q.alternativas[0]}"
+>
+
+<input
+type="text"
+id="p${index}a1"
+value="${q.alternativas[1]}"
+>
+
+<input
+type="text"
+id="p${index}a2"
+value="${q.alternativas[2]}"
+>
+
+<input
+type="text"
+id="p${index}a3"
+value="${q.alternativas[3]}"
+>
+
+<label>
+<input
+type="radio"
+name="c${index}"
+value="0"
+${q.correta===0?"checked":""}
+>
+Alternativa 1
+</label>
+
+<label>
+<input
+type="radio"
+name="c${index}"
+value="1"
+${q.correta===1?"checked":""}
+>
+Alternativa 2
+</label>
+<label>
+<input
+type="radio"
+name="c${index}"
+value="2"
+${q.correta===2?"checked":""}
+>
+Alternativa 3
+</label>
+
+<label>
+<input
+type="radio"
+name="c${index}"
+value="3"
+${q.correta===3?"checked":""}
+>
+Alternativa 4
+</label>
+
+`;
+
+area.appendChild(card);
+
+});
+
+function iniciarQuiz(){
+
+perguntas.length=0;
+
+for(let i=0;i<3;i++){
+
+const correta=parseInt(
+document.querySelector(`input[name="c${i}"]:checked`).value
+);
+
+perguntas.push({
+
+pergunta:document.getElementById(`p${i}`).value,
+
+alternativas:[
+document.getElementById(`p${i}a0`).value,
+document.getElementById(`p${i}a1`).value,
+document.getElementById(`p${i}a2`).value,
+document.getElementById(`p${i}a3`).value
+],
+
+correta:correta
+
+});
+
+}
+
+document.getElementById("config").style.display="none";
+document.getElementById("quiz").style.display="block";
+
+indice=0;
+pontos=0;
+
+carregarPergunta();
+
+}
+
 let indice=0;
 let pontos=0;
+
+let tempo = 15;
+let intervalo;
 
 const pergunta=document.getElementById("pergunta");
 const alternativas=document.getElementById("alternativas");
@@ -152,16 +336,20 @@ const proximo=document.getElementById("proximo");
 function carregarPergunta(){
 
 proximo.style.display="none";
+
 alternativas.innerHTML="";
 
 const atual=perguntas[indice];
 
-pergunta.innerText=(indice+1)+". "+atual.pergunta;
+pergunta.innerHTML=(indice+1)+". "+atual.pergunta;
 
 atual.alternativas.forEach((texto,i)=>{
 
 const btn=document.createElement("button");
-btn.innerText=texto;
+
+btn.className="alternativa";
+
+btn.innerHTML=texto;
 
 btn.onclick=()=>responder(btn,i);
 
@@ -169,48 +357,110 @@ alternativas.appendChild(btn);
 
 });
 
+iniciarTemporizador();
+
 }
 
 function responder(botao,resposta){
 
-const correta=perguntas[indice].correta;
+clearInterval(intervalo);
 
-Array.from(alternativas.children).forEach((b,index)=>{
+const correta = perguntas[indice].correta;
 
-b.disabled=true;
+
+// Desabilita todos os botões
+Array.from(alternativas.children).forEach((btn,index)=>{
+
+btn.disabled=true;
 
 if(index===correta){
-b.classList.add("correta");
+btn.classList.add("correta");
 }
 
 });
 
+// Verifica resposta
 if(resposta===correta){
+
 pontos++;
+
 }else{
+
 botao.classList.add("errada");
+
 }
 
 proximo.style.display="block";
 
 }
 
-proximo.onclick=()=>{
+proximo.addEventListener("click",()=>{
 
 indice++;
 
 if(indice<perguntas.length){
+
 carregarPergunta();
+
 }else{
-document.getElementById("quiz").style.display="none";
-document.getElementById("resultado").style.display="block";
-document.getElementById("pontuacao").innerHTML=
-`Você acertou <b>${pontos}</b> de <b>${perguntas.length}</b> perguntas.`;
+
+mostrarResultado();
+
 }
 
-};
+});
+
+function mostrarResultado(){
+
+document.getElementById("quiz").style.display="none";
+
+document.getElementById("resultado").style.display="block";
+
+document.getElementById("pontuacao").innerHTML=
+`Você acertou <strong>${pontos}</strong> de <strong>${perguntas.length}</strong> perguntas.`;
+
+}
+
+function iniciarTemporizador(){
+
+clearInterval(intervalo);
+
+tempo = 15;
+
+document.getElementById("timer").innerHTML =
+"Tempo: " + tempo + "s";
+
+intervalo = setInterval(()=>{
+
+tempo--;
+
+document.getElementById("timer").innerHTML =
+"Tempo: " + tempo + "s";
+
+if(tempo<=0){
+
+clearInterval(intervalo);
+
+// Avança automaticamente
+
+indice++;
+
+if(indice<perguntas.length){
 
 carregarPergunta();
+
+}else{
+
+mostrarResultado();
+
+}
+
+}
+
+},1000);
+
+}
+
 
 </script>
 
