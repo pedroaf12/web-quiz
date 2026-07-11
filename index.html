@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#4f46e5,#0ea5e9);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.quiz{
+    width:90%;
+    max-width:650px;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+#pergunta{
+    font-size:22px;
+    margin-bottom:20px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin:8px 0;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:17px;
+    background:#f3f4f6;
+    transition:.3s;
+}
+
+button:hover{
+    background:#dbeafe;
+}
+
+.correta{
+    background:#22c55e !important;
+    color:white;
+}
+
+.errada{
+    background:#ef4444 !important;
+    color:white;
+}
+
+#proximo{
+    display:none;
+    margin-top:20px;
+    background:#2563eb;
+    color:white;
+}
+
+#resultado{
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz">
+
+<h1>🎯 Quiz</h1>
+
+<div id="quiz">
+    <div id="pergunta"></div>
+
+    <div id="alternativas"></div>
+
+    <button id="proximo">Próxima</button>
+</div>
+
+<div id="resultado" style="display:none;">
+    <h2>Quiz Finalizado!</h2>
+    <br>
+    <h3 id="pontuacao"></h3>
+    <br>
+    <button onclick="location.reload()">Jogar Novamente</button>
+</div>
+
+</div>
+
+<script>
+
+const perguntas = [
+
+{
+pergunta:"Quem descobriu o Brasil?",
+alternativas:[
+"Cristóvão Colombo",
+"Pedro Álvares Cabral",
+"Dom Pedro I",
+"Vasco da Gama"
+],
+correta:1
+},
+
+{
+pergunta:"Quem é considerado o pai do marketing moderno?",
+alternativas:[
+"Peter Drucker",
+"Seth Godin",
+"Philip Kotler",
+"Steve Jobs"
+],
+correta:2
+},
+
+{
+pergunta:"Qual a melhor empresa do mundo?",
+alternativas:[
+"Google",
+"Microsoft",
+"Apple",
+"DRX"
+],
+correta:3
+}
+
+];
+
+let indice=0;
+let pontos=0;
+
+const pergunta=document.getElementById("pergunta");
+const alternativas=document.getElementById("alternativas");
+const proximo=document.getElementById("proximo");
+
+function carregarPergunta(){
+
+proximo.style.display="none";
+alternativas.innerHTML="";
+
+const atual=perguntas[indice];
+
+pergunta.innerText=(indice+1)+". "+atual.pergunta;
+
+atual.alternativas.forEach((texto,i)=>{
+
+const btn=document.createElement("button");
+btn.innerText=texto;
+
+btn.onclick=()=>responder(btn,i);
+
+alternativas.appendChild(btn);
+
+});
+
+}
+
+function responder(botao,resposta){
+
+const correta=perguntas[indice].correta;
+
+Array.from(alternativas.children).forEach((b,index)=>{
+
+b.disabled=true;
+
+if(index===correta){
+b.classList.add("correta");
+}
+
+});
+
+if(resposta===correta){
+pontos++;
+}else{
+botao.classList.add("errada");
+}
+
+proximo.style.display="block";
+
+}
+
+proximo.onclick=()=>{
+
+indice++;
+
+if(indice<perguntas.length){
+carregarPergunta();
+}else{
+document.getElementById("quiz").style.display="none";
+document.getElementById("resultado").style.display="block";
+document.getElementById("pontuacao").innerHTML=
+`Você acertou <b>${pontos}</b> de <b>${perguntas.length}</b> perguntas.`;
+}
+
+};
+
+carregarPergunta();
+
+</script>
+
+</body>
+</html>
